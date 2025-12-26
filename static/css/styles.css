@@ -1,0 +1,48 @@
+body, form {
+    display: flex;
+    flex-direction: column;
+}
+
+#left-column, #right-column {
+    overflow-y: auto;
+    height: 100vh;
+    border: 1px solid #ccc;
+}
+
+#left-column {
+    width: 70%
+}
+
+#right-column {
+    display: flex;
+    flex-direction: column;
+}
+
+#bottom-button {
+    margin-top: auto;
+    padding: 10px;
+}
+
+input {
+    width: 40px;
+    height: 15px;
+    display: inline-block;
+    margin: 5px;
+}
+
+.list-group-item {
+    display: flex; /* Используем Flexbox */
+    justify-content: space-between; /* Разделяем элементы по краям */
+    align-items: center; /* Центрируем по вертикали */
+}
+
+ul {
+ padding:5px;
+}
+li {
+ border-top:1px solid #bbb;
+ padding:0 2px 0 4px;
+}
+li:first-child {
+ border:none;
+}

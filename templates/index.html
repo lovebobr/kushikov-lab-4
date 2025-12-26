@@ -1,0 +1,609 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моделирование потерь от загрязнения атмосферы</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Стили из оригинального index.html, без изменений для простоты */
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 2.2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--success);
+            border-radius: 2px;
+        }
+
+        h2 {
+            color: var(--secondary);
+            margin: 25px 0 15px;
+            font-size: 1.5rem;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eaeaea;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: var(--transition);
+            border-top: 4px solid var(--primary);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--success);
+        }
+
+        .scrollable-section {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        label {
+            flex: 1;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            min-width: 200px;
+        }
+
+        .input {
+            flex: 0 1 20px;
+        }
+
+        input, select {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+            flex: 2;
+            min-width: 60px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.2);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38b2d6;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e1156f;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e68a1a;
+            transform: translateY(-2px);
+        }
+
+        .btn-random-all {
+            background: linear-gradient(135deg, #ff9a00, #ff6a00);
+            color: white;
+            font-size: 1.1rem;
+            padding: 15px 30px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 15px rgba(255, 106, 0, 0.3);
+        }
+
+        .btn-random-all:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 106, 0, 0.4);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .function-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8fbff;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+        }
+
+        .function-label {
+            min-width: 120px;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .function-input {
+            width: 70px;
+            text-align: center;
+            max-width: 200px;
+        }
+
+        .coefficient-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #f8fbff;
+            border-radius: 8px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .footer {
+            width: 100%;
+            text-align: center;
+            margin-top: 40px;
+            padding: 25px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            color: #666;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .authors {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Новая структура колонок */
+        .columns-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            width: 100%;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .full-width {
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        /* Адаптация для мобильных */
+        @media (max-width: 768px) {
+            .columns-container {
+                flex-direction: column;
+            }
+
+            .column {
+                width: 100%;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .card {
+                padding: 20px 15px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .function-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .coefficient-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            label {
+                min-width: 100%;
+            }
+        }
+
+        /* Стилизация скроллбара */
+        .scrollable-section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-section::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .scrollable-section::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .scrollable-section::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.3s; }
+        .card:nth-child(5) { animation-delay: 0.4s; }
+
+        /* Анимация для кнопки */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse-animation {
+            animation: pulse 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Математическая модель потерь от загрязнения атмосферы</h1>
+        <p>Исследование динамики потерь от загрязнения промышленностью и автотранспортом</p>
+
+        <button type="button" onclick="randomizeAllValues()" class="btn btn-random-all">
+            <i class="fas fa-dice"></i> Случайные значения для всех параметров
+        </button>
+    </header>
+
+    <div class="container">
+        <!-- Основная форма для расчета системы -->
+        <form method="post" id="main-form">
+            <div class="columns-container">
+                <!-- Левая колонка -->
+                <div class="column">
+                    <!-- Параметры начальных условий -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Начальные потери и возмущения</h2>
+
+                        </div>
+                        <div class="scrollable-section">
+                            {% for key, attr in v0.items() %}
+                            <div class="coefficient-item">
+                                <label>{{ key }}: {{ attr.name }}</label>
+                                <input type="text" name="v0_{{ key }}" value="{{ attr.value }}" class="randomizable input">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Коэффициенты нормализации -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Коэффициенты нормализации потерь</h2>
+
+                        </div>
+                        <div class="scrollable-section">
+                            {% for key, attr in c.items() %}
+                            <div class="coefficient-item">
+                                <label>{{ key }}: {{ attr.name }}</label>
+                                <input type="text" name="c_{{ key }}" value="{{ attr.value }}" class="input">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Правая колонка -->
+                <div class="column">
+                    <!-- Функции -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Вспомогательные функции модели</h2>
+
+                        </div>
+                        <div class="scrollable-section">
+                            {% for key, func in f.items() %}
+                            <div class="function-row">
+                                {% set func_num = key.split('_')[1] %}
+                                {% set var_num = func.L.split('_')[1] if '_' in func.L else func.L %}
+                                <span><b>f{{ func_num|replace('1','₁')|replace('2','₂')|replace('3','₃')|replace('4','₄')|replace('5','₅')|replace('6','₆')|replace('7','₇')|replace('8','₈')|replace('9','₉')|replace('0','₀') }}(U{{ var_num|replace('1','₁')|replace('2','₂')|replace('3','₃')|replace('4','₄')|replace('5','₅')|replace('6','₆')|replace('7','₇')|replace('8','₈')|replace('9','₉')|replace('0','₀') }}) = </b></span>
+                                <input type="text" name="f_{{ key }}_a" value="{{ func.a }}" class="function-input randomizable">
+                                <span> U{{ var_num|replace('1','₁')|replace('2','₂')|replace('3','₃')|replace('4','₄')|replace('5','₅')|replace('6','₆')|replace('7','₇')|replace('8','₈')|replace('9','₉')|replace('0','₀') }}<b>³</b> +</span>
+                                <input type="text" name="f_{{ key }}_b" value="{{ func.b }}" class="function-input randomizable">
+                                <span> U{{ var_num|replace('1','₁')|replace('2','₂')|replace('3','₃')|replace('4','₄')|replace('5','₅')|replace('6','₆')|replace('7','₇')|replace('8','₈')|replace('9','₉')|replace('0','₀') }}<b>²</b> +</span>
+                                <input type="text" name="f_{{ key }}_c" value="{{ func.c }}" class="function-input randomizable">
+                                <span> U{{ var_num|replace('1','₁')|replace('2','₂')|replace('3','₃')|replace('4','₄')|replace('5','₅')|replace('6','₆')|replace('7','₇')|replace('8','₈')|replace('9','₉')|replace('0','₀') }} +</span>
+                                <input type="text" name="f_{{ key }}_d" value="{{ func.d }}" class="function-input randomizable">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Возмущения -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Экологические возмущения</h2>
+
+                        </div>
+                        <div class="scrollable-section">
+                            {% for key, func in z.items() %}
+                            <div class="coefficient-item">
+                                <div class="function-definition">
+                                    <div class="function-input-group">
+                                        <span class="function-name">{{ key }} = </span>
+                                        <input type="text" name="z_{{ key }}_g" value="{{ func.g }}" class="randomizable function-input small-input">
+                                        <span> t<b>³</b> +</span>
+                                        <input type="text" name="z_{{ key }}_b" value="{{ func.b }}" class="randomizable function-input small-input">
+                                        <span> t<b>²</b> +</span>
+                                        <input type="text" name="z_{{ key }}_m" value="{{ func.m }}" class="randomizable function-input small-input">
+                                    </div>
+                                    <div class="function-description">
+                                        <label>{{ func.N }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопка отправки основной формы -->
+            <div class="card">
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem;">
+                        <i class="fas fa-calculator"></i> Рассчитать потери от загрязнения
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Отдельная форма для построения графика -->
+        <form id="polarPlotForm" method="POST" action="/polar_plot">
+            <!-- Границы нормы для параметров -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <h2 class="card-title">Экологические нормативы для потерь</h2>
+                </div>
+                <div class="scrollable-section">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+                        {% set norm_bounds = norm_bounds or [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] %}
+                        {% for i in range(14) %}
+                        <div class="form-group">
+                            <label for="norm_bound_{{ i }}">Норма для U{{ i + 1 }}:</label>
+                            <input type="number" id="norm_bound_{{ i }}" name="norm_bound_{{ i }}" step="0.01" value="{{ norm_bounds[i] }}" class="randomizable" required>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-chart-line"></i> Построить полярные графики по всем временным точкам
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 15px; padding: 10px; background: #e8f4fd; border-radius: 5px; border-left: 4px solid #4cc9f0;">
+                        <p style="margin: 0; font-size: 0.9rem; color: #2c3e50;">
+                            <i class="fas fa-info-circle"></i>
+                            Будет построено 10 полярных графиков для временных точек: 0.1, 0.2, ..., 1.0
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function randomizeAllValues() {
+            const inputs = document.querySelectorAll('.randomizable');
+            const button = document.querySelector('.btn-random-all');
+            button.classList.add('pulse-animation');
+            setTimeout(() => {
+                button.classList.remove('pulse-animation');
+            }, 500);
+
+            inputs.forEach(input => {
+                if (input.name && input.name.startsWith('norm_bound_')) {
+                    const randomValue = (Math.random() * 1).toFixed(2);
+                    input.value = randomValue;
+                } else {
+                    const randomValue = Math.random().toFixed(2);
+                    input.value = randomValue;
+                }
+            });
+
+            showNotification('Все значения успешно рандомизированы!', 'success');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#4CAF50' : '#f44336'};
+                color: white;
+                border-radius: 5px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1000;
+                font-weight: 600;
+                transform: translateX(150%);
+                transition: transform 0.3s ease;
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+            });
+        });
+    </script>
+</body>
+</html>
