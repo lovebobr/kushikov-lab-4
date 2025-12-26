@@ -1,6 +1,7 @@
 # app.py
 from flask import Flask, render_template, request, redirect, send_file, session, url_for
 import matplotlib
+import os
 
 matplotlib.use('Agg')  # Используйте бэкенд без GUI
 import matplotlib.pyplot as plt
@@ -354,4 +355,5 @@ def polar_plot():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
